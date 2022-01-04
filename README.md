@@ -62,3 +62,22 @@ cp -R ../my-old-remix-app/app app
 - `app/routes/` - This is where all your "route modules" will go. Remix uses the files in this directory to create the URL routes for your app based on the name of the files.
 - `public/` - This is where your static assets go (images/fonts/etc)
 - `remix.config.js` - Remix has a handful of configuration options you can set in this file.
+
+## This app's Routes
+
+Here are all the routes our app is going to have:
+
+| Route            	| Description                                        	|
+|------------------	|----------------------------------------------------	|
+| `/`              	| The index route of the app                         	|
+| `/jokes`         	| Displays 10 latest jokes                           	|
+| `/jokes/:jokeId` 	| Display an individual joke                         	|
+| `/jokes/new`     	| 🔐: Allows authenticated users to create a new joke 	|
+| `/login`         	| Allows unauthenticated users to login to our app   	|
+
+You can programmatically create routes via the `remix.config.js`, but the more common way to create the routes is through the file system. This is called "file-based routing."
+
+Each file we put in the app/routes directory is called a "Route Module" and by following the route filename convention, we can create the routing URL structure we're looking for. Remix uses React Router under the hood to handle this routing.
+
+> For more information, see ["Route Filenames"](https://remix.run/docs/en/v1.1.1/api/conventions#route-filenames) on the Remix docs!
+
