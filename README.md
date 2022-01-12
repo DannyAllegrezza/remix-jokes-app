@@ -81,3 +81,30 @@ Each file we put in the app/routes directory is called a "Route Module" and by f
 
 > For more information, see ["Route Filenames"](https://remix.run/docs/en/v1.1.1/api/conventions#route-filenames) on the Remix docs!
 
+# Database
+
+This project uses `prisma`, a JavaScript ORM. To run the initial migrations, run:
+
+`npx prisma db push`
+
+This will read our config from our `.env` file, read the Prisma schema from `prisma/schema.prisma`, and create the database at `prisma/dev.db` (we are using SQLite).
+
+## Loading the seed data
+
+We created a file to seed our joke data (`prisma/seed.ts`), which contains a function to generate some jokes and then `INSERT` them into the database. 
+
+```ts
+async function seed() {
+  await Promise.all(
+    getJokes().map((joke) => {
+      // db is the Prisma client. We have type support for our schema, so we have `.joke` available. The .create() function performs the INSERT
+      return db.joke.create({ data: joke });
+    })
+  );
+}
+```
+
+Since this is a `.ts` file, we run it via the `node --require esbuild-register prisma/seed.ts` command
+
+### A note about the connection
+The .server part of the filename informs Remix that this code should never end up in the browser. This is optional, because Remix does a good job of ensuring server code doesn't end up in the client. But sometimes some server-only dependencies are difficult to treeshake, so adding the .server to the filename is a hint to the compiler to not worry about this module or its imports when bundling for the browser. The .server acts as a sort of boundary for the compiler.
