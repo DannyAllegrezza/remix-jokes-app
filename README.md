@@ -83,7 +83,11 @@ Each file we put in the app/routes directory is called a "Route Module" and by f
 
 # Database
 
-This project uses `prisma`, a JavaScript ORM. To run the initial migrations, run:
+This project uses `prisma`, a JavaScript ORM. First, we need to populate our .env file. Do this by running: 
+
+`npx prisma init --datasource-provider sqlite`
+
+To run the initial migrations, run:
 
 `npx prisma db push`
 
