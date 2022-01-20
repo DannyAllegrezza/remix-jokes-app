@@ -48,14 +48,45 @@ export async function getUserId(request: Request) {
   return userId;
 }
 
+export async function getUser(request: Request) {
+  const userId = await getUserId(request);
+  if (typeof userId !== "string") {
+    return null;
+  }
+
+  try {
+    const user = await db.user.findUnique({
+      where: { id: userId },
+    });
+    return user;
+  } catch {
+    throw logout(request);
+  }
+}
+
+export async function logout(request: Request) {
+  const session = await storage.getSession(request.headers.get("Cookie"));
+  return redirect("/login", {
+    headers: {
+      "Set-Cookie": await storage.destroySession(session),
+    },
+  });
+}
+
 export async function requireUserId(
   request: Request,
   redirectTo: string = new URL(request.url).pathname
 ) {
   const session = await getUserSession(request);
+  console.log(`requireUserId() - session=${JSON.stringify(session)}`);
   const userId = session.get("userId");
+  console.log(`requireUserId() - found userId ${userId}`);
   if (!userId || typeof userId !== "string") {
+    console.log(
+      `requireUserId() - A user ID did not exist on the session (or there was no session!). Redirecting...`
+    );
     const searchParams = new URLSearchParams([["redirectTo", redirectTo]]);
+    console.log(`requireUserId() - searchParams=${searchParams}`);
     throw redirect(`/login?${searchParams}`);
   }
   return userId;
